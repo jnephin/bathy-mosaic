@@ -1,10 +1,11 @@
-## Reclass rasters to convert to positive values only
+## Convert rasters to positive values only
 
 # required packages
 require(parallel)
 
 # working directory
 setwd('..')
+#setwd("F:/Bathymetry_Multibeam/")
 
 #--------------------------------------------------#
 
@@ -18,23 +19,32 @@ rasterAbs <- function(rasterfile){
   require(raster)
   require(rgdal)
   # load input raster
-  ras <- raster(rasterfile)
+  inf <- paste0("Rasters/Original/",rasterfile)
+  ras <- raster(inf)
   # assign correct NA value
   NAvalue(ras) <- -4.076491e+14
   # output filename
-  outf <- sub(".tif","_abs.tif",rasterfile)
-  # Set values to absolute values
-  aras <- raster::calc(ras, fun=abs, filename=outf, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
+  outf <- paste0("Rasters/Abs/",rasterfile)
+  # Check for majority negative values
+  sam <- sampleRandom(ras, 1000)
+  qsam <- quantile(sam)
+  # if the majority of sample values are negative, take the absolute values
+  if(qsam[3] < 0){
+    # Set values to absolute values
+    aras <- raster::calc(ras, fun=abs, filename=outf, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
+  } else {
+    file.copy(inf, outf, overwrite = TRUE)
+  }
 }
 ####----------------------------------------------------------------------####
 
 
 # list rasters
-rlist <-list.files(path="Rasters",pattern="*.tif$",full.names = TRUE)
+rlist <-list.files(path="Rasters/Original",pattern="*.tif$")
 
 
 ## create cluster object 
-num_cores <- detectCores()
+num_cores <- detectCores() - 1
 cl <- makeCluster(num_cores)
 
 # apply function across list

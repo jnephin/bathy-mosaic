@@ -5,23 +5,11 @@
 
 
    
- # fast mosaic method --> don't have enough memory for this method for all areas
-for r in "CSoG" "DE" "EQCS" "JDF" "NSoG" "SHS" "SSoG" "WHG" "WQCS"; do 
-    filename="Regions/$r"
-    inf=$(<$filename)
-    out="Mosaics/${r}_5m.tif"
-	na="-3.4e+38"
-    C:/Anaconda/Scripts/gdal_merge.py -of "GTiff" -co "TILED=YES" -co "COMPRESS=LZW" -co "BIGTIFF=YES" -a_nodata $na -init $na $inf -o $out
-done
-
-
-#-------------------------------------------------------------------------------------------#
-
-# too large for gdal_merge method -> create empty mosaic then add rasters with gdalwarp
-for r in "QCStr" "NWCVI" "SWCVI" "CWCVI" "NHS"; do 
+#  empty mosaic then add rasters with gdalwarp
+for r in "CSoG" "QCStr" "NWCVI" "SWCVI" "CWCVI" "NHS" "DE" "EQCS" "JDF" "NSoG" "SHS" "SSoG" "WHG" "WQCS"; do 
    filename="Regions/$r"
    inf=$(<$filename)
-   out="Mosaics/${r}_5m.tif"
+   out="Mosaics/Original/${r}_5m.tif"
    na="-3.4e+38"
    C:/Anaconda/Scripts/gdal_merge.py -createonly -of "GTiff" -co "TILED=YES" -co "COMPRESS=LZW" -co "BIGTIFF=YES" -a_nodata $na -init $na $inf -o $out
     # add each file into mosaic with gdalwarp
@@ -32,7 +20,16 @@ done
 
 
 
-   
+ #-------------------------------------------------------------------------------------------#
+ # fast mosaic method --> don't have enough memory for this method for all areas
+for r in  ; do 
+    filename="Regions/$r"
+    inf=$(<$filename)
+    out="Mosaics/Original/${r}_5m.tif"
+	na="-3.4e+38"
+    C:/Anaconda/Scripts/gdal_merge.py -of "GTiff" -co "TILED=YES" -co "COMPRESS=LZW" -co "BIGTIFF=YES" -a_nodata $na -init $na $inf -o $out
+done
+
 
 
 

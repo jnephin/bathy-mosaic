@@ -11,24 +11,23 @@ mosaic <- c("NWCVI_5m.tif","QCStr_5m.tif","SWCVI_5m.tif","JDF_5m.tif","SSoG_5m.t
 
 
 # load rasters
-ras <- raster(paste0("F:/Bathymetry_Multibeam/Mosaics/", mosaic[5]))
+ras <- raster("F:/Bathymetry_Multibeam/Mosaics/CSoG_5m_crop.tif")
+#ras <- raster("F:/Bathymetry_Multibeam/Mosaics/CSoG_5m.tif")
 ras
 plot(ras)
-#plot(reg, add=T)
 
-
-NAvalue(warp) <- -3.4e+038
-NAvalue(mer) <- -999
-vals <- getValues(mer)
-
-
-plot(ras)
-plot(reg[reg$Name == "JDF",], add=T)
-
-
-sam <- sampleRandom(mer, 10000)
+# values
+NAvalue(ras)
+sam <- sampleRandom(ras, 10000)
 quantile(sam)
 
+# plot with region
+plot(ras)
+plot(reg[reg$Name == "CSoG",], add=T)
 
-writeRaster(mer, filename="F:/Bathymetry_Multibeam/Mosaics/test.tif", 
-            overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
+# test mask
+outf <- "F:/Bathymetry_Multibeam/Mosaics/CSoG_5m_masked.tif"
+raster::mask(ras, reg[reg$Name == "CSoG",], filename=outf, 
+             overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
+
+mras <- raster("F:/Bathymetry_Multibeam/Mosaics/CSoG_5m_masked.tif")

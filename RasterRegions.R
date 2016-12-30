@@ -17,7 +17,7 @@ reg <- readOGR(dsn = "C:/Users/NephinJ/Documents/Projects/Spatial/EEZ", layer = 
 name <- names(table(reg$Name))
 
 # list of all rasters to loop through
-ras.list <- list.files(path="Rasters",pattern="proj.tif$", full.names = TRUE)
+ras.list <- list.files(path="Rasters/Projected",pattern=".tif$", full.names = TRUE)
 
 # Empty vector to place raster names within spatial extent of regions
 rasterNames <- NULL

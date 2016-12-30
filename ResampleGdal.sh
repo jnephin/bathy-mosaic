@@ -2,12 +2,15 @@
 # Only resample rasters that are not 5m resolution
 # cd to Rasters directory
 
-ras=$(ls *_abs.tif)
+ras=$(ls Abs/)
    for r in $ras; do
+   basext=${r##*/}
+   t="Abs/${basext}"
    if grep -q "5m" <<< $r; then
-      rename abs.tif abs_5m.tif $r
+      f="Resampled/${basext}"
+	  cp $t $f
    else
-      out="${r%.tif}_5m.tif"
-      gdalwarp --config GDAL_CACHEMAX 3000 -wm 2000 -co TILED=YES -r cubicspline -ot Float32 -tr 5 5 -overwrite $r $out
+      out="Resampled/${basext%.tif}_r5m.tif"
+      gdalwarp --config GDAL_CACHEMAX 500 -wm 2000 -co TILED=YES -r bilinear -ot Float32 -tr 5 5 -overwrite $t $out
    fi
 done

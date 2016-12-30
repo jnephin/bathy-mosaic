@@ -19,11 +19,11 @@ rasterProj <- function(rasterfile){
   require(raster)
   require(rgdal)
   # load input raster
-  ras <- raster(rasterfile)
+  ras <- raster(paste0("Rasters/Resampled/",rasterfile))
   # assign correct CRS
   proj4string(ras) <- proj
   # output filename
-  outf <- sub(".tif","_proj.tif",rasterfile)
+   outf <- paste0("Rasters/Projected/",rasterfile)
   # write raster to file
   raster::writeRaster(ras,filename=outf, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
 }
@@ -31,14 +31,14 @@ rasterProj <- function(rasterfile){
 
 
 # list rasters
-rlist <-list.files(path="Rasters",pattern="*5m.tif$",full.names = TRUE)
+rlist <-list.files(path="Rasters/Resampled/",pattern="*.tif$")
 
 #full bc albers proj
 proj <- "+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +datum=NAD83 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 
 
 ## create cluster object 
-num_cores <- detectCores()
+num_cores <- detectCores() - 1
 cl <- makeCluster(num_cores)
 
 ## make variables and packages available to cluster

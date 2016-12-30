@@ -6,7 +6,6 @@
 
 # required packages
 require(parallel)
-require(rgdal)
 
 # working directory
 setwd('..')
@@ -24,14 +23,19 @@ maskfun <- function(rasterfile){
   # load mosaiced raster
   ras <- raster(rasterfile)
   # output filename
-  outf <- sub(".tif","_clip.tif", rasterfile)
+  outc <- sub("Mosaics/Original","Mosaics/Cropped", rasterfile)
+  outm <- sub("Mosaics/Original","Mosaics/Masked", rasterfile)
   # name of region
   regname <- sub("[_].*","",rasterfile)
   regname <- sub(".*/","",regname)
   # set ful proj string
   proj4string(ras) <- proj
-  # Mask - converts cells in raster stack to NA where cells are == NA in nccbop
-  mras <- raster::mask(ras, reg[reg$Name == regname,], filename=outf, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
+  # load region polygons
+  reg <- readOGR(dsn = "C:/Users/NephinJ/Documents/Projects/Spatial/EEZ", layer = "Regions_alb")
+  # Crop - crop raster to spatial extent of region
+  eras <- raster::crop(ras, extent(reg[reg$Name == regname,]), filename=outc, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
+  # Mask - assigns NA values outside of region polygon
+  mras <- raster::mask(eras, reg[reg$Name == regname,], filename=outm, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
 }
 ####----------------------------------------------------------------------####
 
@@ -43,11 +47,8 @@ maskfun <- function(rasterfile){
 #full bc albers proj
 proj <- "+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +datum=NAD83 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 
-# load 
-reg <- readOGR(dsn = "C:/Users/NephinJ/Documents/Projects/Spatial/EEZ", layer = "Regions_alb")
-
 # list mosaiced rasters
-ras.list <- list.files(path="Mosaics",pattern=".tif$", full.names = TRUE)
+ras.list <- list.files(path="Mosaics/Original",pattern=".tif$", full.names = TRUE)
 
 ####----------------------------------------------------------------------####
 
@@ -58,11 +59,11 @@ ras.list <- list.files(path="Mosaics",pattern=".tif$", full.names = TRUE)
 # Run in parallel
 
 ## create cluster object 
-num_cores <- detectCores() - 1
+num_cores <- detectCores() - 2
 cl <- makeCluster(num_cores)
 
 ## make variables and packages available to cluster
-clusterExport(cl, varlist=c("reg", "proj"))
+clusterExport(cl, varlist="proj")
 
 # apply function over clusters for thiessen interp layers
 parSapply(cl, ras.list, FUN=maskfun)
