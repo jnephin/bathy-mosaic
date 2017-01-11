@@ -21,8 +21,6 @@ rasterAbs <- function(rasterfile){
   # load input raster
   inf <- paste0("Rasters/Original/",rasterfile)
   ras <- raster(inf)
-  # assign correct NA value
-  NAvalue(ras) <- -4.076491e+14
   # output filename
   outf <- paste0("Rasters/Abs/",rasterfile)
   # Check for majority negative values
@@ -52,6 +50,5 @@ parSapply(cl, rlist, FUN=rasterAbs)
 
 ## stop cluster
 stopCluster(cl)
-
 
 

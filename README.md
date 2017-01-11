@@ -27,8 +27,8 @@ Methods for Mosaicing Bathymetry Multibeam Data
    * Exports to 'Mosaics' directory
    * Run MosaicGdal.sh in cygwin
 	
-6) Mask rasters by bc region polygons (Regions_alb.shp)
-   * Run RasterMask.R in RStudio
+6) Mask rasters by BC region polygons (Regions_alb.shp)
+   * Run MosaicMask.R in RStudio
    
 7) Calculate stats and add pyramids
    * Run PyramidsGdal.sh

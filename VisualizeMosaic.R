@@ -11,7 +11,7 @@ mosaic <- c("NWCVI_5m.tif","QCStr_5m.tif","SWCVI_5m.tif","JDF_5m.tif","SSoG_5m.t
 
 
 # load rasters
-ras <- raster("F:/Bathymetry_Multibeam/Mosaics/CSoG_5m_crop.tif")
+ras <- raster("F:/Bathymetry_Multibeam/Mosaics/Original/CSoG_5m.tif")
 #ras <- raster("F:/Bathymetry_Multibeam/Mosaics/CSoG_5m.tif")
 ras
 plot(ras)

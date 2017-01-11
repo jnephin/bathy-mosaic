@@ -26,11 +26,12 @@ for a in areas:
 		
 		# variables
 		inRaster=r
-		outRaster="F:/Bathymetry_Multibeam"+"/Rasters/"+r+".tif"
+		outRaster="F:/Bathymetry_Multibeam"+"/Rasters/Original/"+r+".tif"
 		pt="32_BIT_FLOAT" 
 		f="TIFF"
+		na=-3.4e+38
 
 		# export rasters
-		arcpy.CopyRaster_management (inRaster,outRaster,pixel_type=pt)
+		arcpy.CopyRaster_management (inRaster,outRaster, background_value=na, nodata_value=na, pixel_type=pt)
 
 

@@ -1,8 +1,7 @@
 ## Created by Jessica Nephin
-## Last edited 2016-11-25
+## Last edited 2017-01-09
 
-# Masks input raster using clipped to coastline BoP layer
-# Exports raster with appropriate data type to limit storage space
+# Crops and mask mosaics using region polygons
 
 # required packages
 require(parallel)
@@ -15,14 +14,14 @@ setwd('..')
 ####----------------------------------------------------------------------####
 ## Function
 
-## Masks env.layers and exports tiff with chosen datatype
+## Crop and Mask env.layers and exports tiff
 maskfun <- function(rasterfile){
   # packages
   require(raster)
   require(rgdal)
   # load mosaiced raster
   ras <- raster(rasterfile)
-  # output filename
+  # output filenames
   outc <- sub("Mosaics/Original","Mosaics/Cropped", rasterfile)
   outm <- sub("Mosaics/Original","Mosaics/Masked", rasterfile)
   # name of region
@@ -32,11 +31,15 @@ maskfun <- function(rasterfile){
   proj4string(ras) <- proj
   # load region polygons
   reg <- readOGR(dsn = "C:/Users/NephinJ/Documents/Projects/Spatial/EEZ", layer = "Regions_alb")
+  # reg extents
+  ext <- extent(reg[reg$Name == regname,])
   # Crop - crop raster to spatial extent of region
-  eras <- raster::crop(ras, extent(reg[reg$Name == regname,]), filename=outc, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
+  cras <- raster::crop(ras, ext, filename=outc, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
   # Mask - assigns NA values outside of region polygon
-  mras <- raster::mask(eras, reg[reg$Name == regname,], filename=outm, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
+  rasmask <- rasterize(reg[reg$Name == regname,], cras, mask=TRUE, filename=outm, overwrite=TRUE, 
+                       format = "GTiff", datatype = "FLT4S")
 }
+
 ####----------------------------------------------------------------------####
 
 
@@ -48,26 +51,28 @@ maskfun <- function(rasterfile){
 proj <- "+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +datum=NAD83 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 
 # list mosaiced rasters
-ras.list <- list.files(path="Mosaics/Original",pattern=".tif$", full.names = TRUE)
+ras.list <- list.files(path="Mosaics/Original",pattern="5m.tif$", full.names = TRUE)
 
 ####----------------------------------------------------------------------####
-
-
 
 
 ####----------------------------------------------------------------------####
 # Run in parallel
 
 ## create cluster object 
-num_cores <- detectCores() - 2
+num_cores <- detectCores() - 1
 cl <- makeCluster(num_cores)
 
 ## make variables and packages available to cluster
 clusterExport(cl, varlist="proj")
 
-# apply function over clusters for thiessen interp layers
+# apply function over clusters
 parSapply(cl, ras.list, FUN=maskfun)
 
 ## stop cluster
 stopCluster(cl)
+
+
+
+
 
