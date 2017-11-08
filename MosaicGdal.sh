@@ -4,9 +4,9 @@
 # cd to parent directory
 
 
-   
+
 #  empty mosaic then add rasters with gdalwarp
-for r in "CSoG" "QCStr" "NWCVI" "SWCVI" "CWCVI" "NHS" "DE" "EQCS" "JDF" "NSoG" "SHS" "SSoG" "WHG" "WQCS"; do 
+for r in "CSoG" "QCStr" "NWCVI" "SWCVI" "CWCVI" "NHS" "DE" "EQCS" "JDF" "NSoG" "SHS" "SSoG" "WHG" "WQCS"; do
    filename="Regions/$r"
    inf=$(<$filename)
    out="Mosaics/Original/${r}_5m.tif"
@@ -37,14 +37,10 @@ gdal_translate -of "GTiff" -co "COMPRESS=LZW" -co "TILED=YES" -co "BIGTIFF=YES" 
 
  #-------------------------------------------------------------------------------------------#
  # fast mosaic method --> don't have enough memory for this method for all areas
-for r in "CSoG" "QCStr" "NWCVI" "SWCVI" "CWCVI" "NHS" "DE" "EQCS" "JDF" "NSoG" "SHS" "SSoG" "WHG" "WQCS"; do 
+for r in "CSoG" "QCStr" "NWCVI" "SWCVI" "CWCVI" "NHS" "DE" "EQCS" "JDF" "NSoG" "SHS" "SSoG" "WHG" "WQCS"; do
     filename="Regions/$r"
     inf=$(<$filename)
     out="Mosaics/Original/${r}_5m.tif"
-	na="-3.4e+38"
+	  na="-3.4e+38"
     C:/Anaconda/Scripts/gdal_merge.py -of "GTiff" -co "TILED=YES" -co "COMPRESS=LZW" -co "BIGTIFF=YES" -a_nodata $na -init $na $inf -o $out
 done
-
-
-
-
