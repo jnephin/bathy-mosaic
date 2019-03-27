@@ -2,7 +2,7 @@
 # cd to Mosaics/Masked directory
 
 #  add stats and pyramids
-for r in $(ls); do 
+for r in $(ls); do
    gdalinfo -stats $r
-   gdaladdo -r nearest $r 2 4 8 16
+   gdaladdo -r nearest $r 2 4 8 16 32
 done

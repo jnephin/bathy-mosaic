@@ -15,12 +15,12 @@ Methods for Mosaicing Bathymetry Multibeam Data
    * Run ResampleGdal.sh in cygwin
 	
 5) Add correct and full proj string to all 5m rasters
-   * Save updated rasters in Rasters/Projected' direcotry
+   * Save updated rasters in 'Rasters/Projected' direcotry
    * Run RasterProj.R in RStudio
 	
 4) Determine which rasters fall within the spatial extents of bc region polygons (Regions_alb.shp)
    * Exports a list of raster names for each region to the 'Regions' directory
-   * Run RasterRegions.R in RStudio
+   * Run 'RasterRegions.R' in RStudio
 
 5) Mosaic rasters by region
    * Combines rasters into one mosaic for each region

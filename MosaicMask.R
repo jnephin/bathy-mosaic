@@ -30,13 +30,15 @@ maskfun <- function(rasterfile){
   # set ful proj string
   proj4string(ras) <- proj
   # load region polygons
-  reg <- readOGR(dsn = "C:/Users/NephinJ/Documents/Projects/Spatial/EEZ", layer = "Regions_alb")
+  reg <- readOGR(dsn = "Boundary", layer = "MultibeamGridDis")
+  # names of each region layer
+  reg$Name <- paste0("area",reg$ID)
   # reg extents
   ext <- extent(reg[reg$Name == regname,])
   # Crop - crop raster to spatial extent of region
   cras <- raster::crop(ras, ext, filename=outc, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
   # Mask - assigns NA values outside of region polygon
-  rasmask <- rasterize(reg[reg$Name == regname,], cras, mask=TRUE, filename=outm, overwrite=TRUE, 
+  rasmask <- rasterize(reg[reg$Name == regname,], cras, mask=TRUE, filename=outm, overwrite=TRUE,
                        format = "GTiff", datatype = "FLT4S")
 }
 
@@ -59,7 +61,7 @@ ras.list <- list.files(path="Mosaics/Original",pattern="5m.tif$", full.names = T
 ####----------------------------------------------------------------------####
 # Run in parallel
 
-## create cluster object 
+## create cluster object
 num_cores <- detectCores() - 1
 cl <- makeCluster(num_cores)
 
@@ -71,8 +73,3 @@ parSapply(cl, ras.list, FUN=maskfun)
 
 ## stop cluster
 stopCluster(cl)
-
-
-
-
-

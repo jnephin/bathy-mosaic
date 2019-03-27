@@ -5,9 +5,9 @@ require(parallel)
 
 # working directory
 setwd('..')
-#setwd("F:/Bathymetry_Multibeam/")
+#setwd("E:/AbioticData/Bathymetry/Multibeam/")
 
-#--------------------------------------------------#
+
 
 
 ####----------------------------------------------------------------------####
@@ -38,8 +38,9 @@ rasterAbs <- function(rasterfile){
 
 
 # list rasters
-rlist <-list.files(path="Rasters/Original",pattern="*.tif$")
-
+olist <-list.files(path="Rasters/Original",pattern="*.tif$")
+alist <-list.files(path="Rasters/Abs",pattern="*.tif$")
+rlist <- olist[!olist %in% alist]
 
 ## create cluster object 
 num_cores <- detectCores() - 1

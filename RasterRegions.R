@@ -11,9 +11,11 @@ setwd('..')
 #--------------------------------------------------#
 
 # load 
-reg <- readOGR(dsn = "C:/Users/NephinJ/Documents/Projects/Spatial/EEZ", layer = "Regions_alb")
+reg <- readOGR(dsn = "Boundary", layer = "MultibeamGridDis")
 
 # names of each region layer
+reg$Name <- paste0("area",reg$ID)
+
 name <- names(table(reg$Name))
 
 # list of all rasters to loop through

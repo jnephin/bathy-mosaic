@@ -20,18 +20,28 @@ rasterProj <- function(rasterfile){
   require(rgdal)
   # load input raster
   ras <- raster(paste0("Rasters/Resampled/",rasterfile))
-  # assign correct CRS
-  proj4string(ras) <- proj
   # output filename
-   outf <- paste0("Rasters/Projected/",rasterfile)
-  # write raster to file
-  raster::writeRaster(ras,filename=outf, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
+  outf <- paste0("Rasters/Projected/",rasterfile)
+  # Set the coordinate reference system
+  matched <- grepl("proj=aea", proj4string( ras ) )
+  if( !matched ){
+    # project to albers if projection does match geoCRS
+    ras <- projectRaster(ras, res=5, crs=CRS(proj), method="bilinear",
+                         filename=outf, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
+  } else {
+    # Set the coordinate reference system if matches
+    proj4string(ras) <- proj
+    # write raster to file
+    raster::writeRaster(ras,filename=outf, overwrite=TRUE, format = "GTiff", datatype = "FLT4S")
+  }
 }
 ####----------------------------------------------------------------------####
 
 
 # list rasters
-rlist <-list.files(path="Rasters/Resampled/",pattern="*.tif$")
+slist <-list.files(path="Rasters/Resampled/",pattern="*.tif$")
+plist <-list.files(path="Rasters/Projected",pattern="*.tif$")
+rlist <- slist[!slist %in% plist]
 
 #full bc albers proj
 proj <- "+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +datum=NAD83 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
